@@ -1,34 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-900">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Da Vinci Supermarket - Pick an Organ. Feed It Right!</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-  
-  <!-- Font Awesome -->
+
+  <!-- Google Fonts: Fredoka & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+  <!-- Tailwind Custom Colors and Fonts Configuration -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            fredoka: ['Fredoka', 'sans-serif'],
+            fredoka: ['Fredoka', 'cursive', 'sans-serif'],
             sans: ['Plus Jakarta Sans', 'sans-serif'],
           },
           colors: {
-            vinciNavy: '#0f172a',
-            vinciBlue: '#0284c7',
-            vinciLightBlue: '#e0f2fe',
-            vinciGreen: '#16a34a',
-            vinciYellow: '#f59e0b',
-            vinciRed: '#e11d48'
+            chalkBoard: '#1e293b',
+            chalkYellow: '#fef08a',
+            fridgeBlue: '#0f172a',
+            shelfBlue: '#0284c7',
+            accentGreen: '#22c55e',
+            accentGold: '#f59e0b',
+            accentRose: '#f43f5e',
+            woodFrame: '#78350f',
           }
         }
       }
@@ -36,356 +41,608 @@
   </script>
 
   <style>
-    /* Custom Scrollbar & Interactive Animations */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    
-    .pull-tab-animation {
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .pull-tab-animation:hover {
-      transform: translateY(-8px) scale(1.02);
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
+
+    /* Chalkboard Text Effect */
+    .chalk-font {
+      font-family: 'Fredoka', cursive, sans-serif;
+      letter-spacing: 0.05em;
     }
 
-    .fridge-hotspot {
-      position: absolute;
-      border: 2px dashed rgba(255, 255, 255, 0.7);
-      background-color: rgba(2, 132, 199, 0.2);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .fridge-hotspot:hover, .fridge-hotspot.active {
-      background-color: rgba(22, 163, 74, 0.45);
-      border-color: #facc15;
-      box-shadow: 0 0 15px rgba(250, 204, 21, 0.8);
-      transform: scale(1.03);
+    /* Fridge Shelf LED Lighting Effect */
+    .shelf-led {
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4), inset 0 2px 8px rgba(255, 255, 255, 0.8);
     }
 
+    /* Glass Door Reflection */
+    .glass-door {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.1) 100%);
+      backdrop-filter: blur(0.5px);
+    }
+
+    /* Interactive Food Item Button Hover */
+    .food-shelf-card {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .food-shelf-card:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 12px 25px -5px rgba(2, 132, 199, 0.5);
+    }
+    .food-shelf-card.active-item {
+      ring: 4px;
+      ring-color: #f59e0b;
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+    }
+
+    /* Interactive Pull-Tab Slide Animation */
+    .pull-tab-container {
+      perspective: 1000px;
+    }
+    .pull-tab-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .pull-tab-container.open .pull-tab-content {
+      max-height: 280px;
+      opacity: 1;
+    }
+    .pull-tab-handle {
+      transition: transform 0.3s ease;
+    }
+    .pull-tab-container.open .pull-tab-handle {
+      transform: rotate(180deg);
+    }
+
+    /* Pulsing Highlight */
     @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
-      50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.9); }
+      0%, 100% { box-shadow: 0 0 10px rgba(34, 197, 94, 0.6); }
+      50% { box-shadow: 0 0 22px rgba(34, 197, 94, 1); }
     }
-    .pulse-glow {
+    .pulse-highlight {
       animation: pulseGlow 2s infinite;
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="h-full text-slate-100 flex flex-col font-sans bg-slate-950">
 
-  <!-- HEADER -->
-  <header class="bg-slate-900 text-white border-b-4 border-sky-500 sticky top-0 z-50 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+  <!-- TOP APP HEADER -->
+  <header class="bg-slate-900 border-b-4 border-sky-500 sticky top-0 z-50 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      
+      <!-- Brand & Project Title -->
       <div class="flex items-center gap-3">
-        <div class="bg-sky-500 text-slate-900 p-2.5 rounded-xl font-black text-xl font-fredoka flex items-center gap-2 shadow">
-          <i class="fa-solid fa-cart-shopping"></i> 8th Grade
+        <div class="bg-gradient-to-br from-lime-500 to-emerald-600 text-slate-950 px-3 py-1.5 rounded-xl font-fredoka font-black text-lg flex items-center gap-2 shadow-lg">
+          <i class="fa-solid fa-apple-whole text-slate-900"></i> 8th Grade
         </div>
         <div>
-          <h1 class="text-xl sm:text-2xl font-bold font-fredoka tracking-wide text-sky-400">
-            Da Vinci Supermarket <span class="text-white text-base font-normal hidden sm:inline">| Pick an Organ. Feed It Right!</span>
+          <h1 class="text-xl sm:text-2xl font-bold font-fredoka text-amber-400 tracking-wide flex items-center gap-2">
+            Da Vinci Supermarket <span class="text-sky-400 text-sm font-normal hidden sm:inline">| Pick an Organ. Feed It Right!</span>
           </h1>
-          <p class="text-xs text-slate-400 font-medium">Investigadores Vinci 2026 • Bilíngue &amp; Ciências</p>
+          <p class="text-xs text-slate-400 font-medium">Investigadores Vinci 2026 • Ciências &amp; Língua Inglesa</p>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1 sm:gap-2 bg-slate-800 p-1.5 rounded-xl border border-slate-700">
-        <button onclick="switchTab('fridge')" id="tab-fridge" class="nav-btn px-3 py-1.5 rounded-lg font-fredoka text-sm font-semibold transition flex items-center gap-1.5 bg-sky-600 text-white shadow">
-          <i class="fa-solid fa-store"></i> Supermarket
+      <nav class="flex items-center gap-1 sm:gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+        <button onclick="switchTab('fridge')" id="tab-fridge" class="nav-btn px-3.5 py-2 rounded-xl font-fredoka text-sm font-bold transition-all duration-200 flex items-center gap-2 bg-sky-600 text-white shadow-lg">
+          <i class="fa-solid fa-store text-amber-300"></i> Supermarket
         </button>
-        <button onclick="switchTab('organs')" id="tab-organs" class="nav-btn px-3 py-1.5 rounded-lg font-fredoka text-sm font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-700">
-          <i class="fa-solid fa-heart-pulse"></i> Organ Lab
+        <button onclick="switchTab('organs')" id="tab-organs" class="nav-btn px-3.5 py-2 rounded-xl font-fredoka text-sm font-bold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-heart-pulse text-rose-400"></i> Organ Lab
         </button>
-        <button onclick="switchTab('game')" id="tab-game" class="nav-btn px-3 py-1.5 rounded-lg font-fredoka text-sm font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-700">
-          <i class="fa-solid fa-clipboard-check"></i> Shopping Game
+        <button onclick="switchTab('game')" id="tab-game" class="nav-btn px-3.5 py-2 rounded-xl font-fredoka text-sm font-bold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-basket-shopping text-emerald-400"></i> Shopping Game
         </button>
-        <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-btn px-3 py-1.5 rounded-lg font-fredoka text-sm font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-700">
-          <i class="fa-solid fa-graduation-cap"></i> Quiz
+        <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-btn px-3.5 py-2 rounded-xl font-fredoka text-sm font-bold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-graduation-cap text-purple-400"></i> BNCC Quiz
         </button>
       </nav>
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-6">
 
-    <!-- TAB 1: INTERACTIVE SUPERMARKET FRIDGE -->
+    <!-- ==========================================================================
+         TAB 1: INTERACTIVE SUPERMARKET FRIDGE & CUSTOM IMAGE UPLOADER
+         ========================================================================== -->
     <section id="sec-fridge" class="tab-content block space-y-6">
       
-      <!-- Top Banner -->
-      <div class="bg-gradient-to-r from-sky-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-sky-800">
-        <div class="space-y-2 max-w-2xl">
-          <span class="inline-block bg-sky-500/20 text-sky-300 text-xs font-bold px-3 py-1 rounded-full border border-sky-500/30 uppercase tracking-widest">
-            🔍 Interactive Exploration
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-bold font-fredoka">What's on Your Body's Shopping List?</h2>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            Click on any shelf item inside the <strong>Da Vinci Supermarket Fridge</strong> to discover which human organs benefit from its nutrients, size comparisons, and health benefits!
+      <!-- Top Banner / Control Panel -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 p-5 rounded-3xl border border-sky-800/60 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[11px] font-bold px-2.5 py-0.5 rounded-full font-fredoka uppercase tracking-wider">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Interactive Supermarket Showcase
+            </span>
+            <span id="view-mode-badge" class="bg-sky-500/20 text-sky-300 border border-sky-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+              Mode: Vector Fridge Replica
+            </span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black font-fredoka text-white">Pick an Organ. Feed It Right!</h2>
+          <p class="text-slate-300 text-xs sm:text-sm max-w-2xl">
+            Click any shelf item to inspect its nutrient profile and highlight the organs it protects! You can also toggle between the high-fidelity vector fridge and your custom uploaded poster image.
           </p>
         </div>
-        <div class="flex items-center gap-3 bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
-          <div>
-            <span class="block text-2xl font-bold text-amber-400 font-fredoka">10</span>
-            <span class="text-xs text-slate-400">Organs</span>
-          </div>
-          <div class="h-8 w-px bg-slate-700"></div>
-          <div>
-            <span class="block text-2xl font-bold text-emerald-400 font-fredoka">11</span>
-            <span class="text-xs text-slate-400">Superfoods</span>
-          </div>
+
+        <!-- Mode Toggle & Image Upload Controls -->
+        <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-2 rounded-2xl border border-slate-700">
+          <button onclick="setFridgeDisplayMode('vector')" id="btn-mode-vector" class="px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition bg-sky-600 text-white shadow">
+            🎨 Vector Fridge
+          </button>
+          <button onclick="setFridgeDisplayMode('custom')" id="btn-mode-custom" class="px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition text-slate-300 hover:text-white hover:bg-slate-800">
+            🖼️ Custom Poster Image
+          </button>
+          
+          <!-- Hidden File Input -->
+          <input type="file" id="poster-file-input" accept="image/*" class="hidden" onchange="handlePosterImageUpload(event)">
+          <button onclick="document.getElementById('poster-file-input').click()" class="px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition flex items-center gap-1">
+            <i class="fa-solid fa-upload"></i> Upload Poster
+          </button>
         </div>
       </div>
 
-      <!-- Main Fridge Grid + Poster Viewer -->
+      <!-- MAIN DISPLAY LAYOUT: FRIDGE (LEFT 8 COLS) + INSPECTOR & CART (RIGHT 4 COLS) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Interactive Fridge Display (8 Cols) -->
-        <div class="lg:col-span-7 bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-2xl relative">
-          <div class="relative w-full rounded-xl overflow-hidden shadow-inner border border-slate-700 group">
-            <!-- Poster Image -->
-            <img id="supermarket-poster" src="Gemini_Generated_Image_oas0e8oas0e8oas0_2.jpeg" alt="Da Vinci Supermarket Fridge" class="w-full h-auto object-cover rounded-xl block">
+        <!-- FRIDGE DISPLAY AREA (8 COLS) -->
+        <div class="lg:col-span-8 space-y-4">
+          
+          <!-- DISPLAY CONTAINER: VECTOR MODE VS CUSTOM IMAGE MODE -->
+          <div id="fridge-view-container" class="relative rounded-3xl overflow-hidden border-4 border-slate-800 shadow-2xl bg-slate-950">
+            
+            <!-- MODE A: VECTOR REPLICA DISPLAY (DEFAULT - NEVER FAILS TO LOAD) -->
+            <div id="vector-fridge-wrapper" class="block w-full p-4 bg-slate-950 select-none">
+              
+              <!-- TOP POSTER HEADER BANNER -->
+              <div class="bg-slate-900 rounded-2xl border-2 border-slate-800 p-3 mb-4 flex flex-col sm:flex-row justify-between items-center gap-3 relative overflow-hidden shadow-inner">
+                
+                <!-- Green Torn Paper Tag (8th Grade) -->
+                <div class="bg-gradient-to-r from-lime-500 to-emerald-600 text-slate-950 px-4 py-2 rounded-xl font-black font-fredoka text-xl tracking-wider shadow-md transform -rotate-2 flex items-center gap-2">
+                  <i class="fa-solid fa-graduation-cap"></i> 8th Grade
+                </div>
 
-            <!-- Interactive Hotspots Overlay -->
-            <div id="hotspot-overlay" class="absolute inset-0">
-              <!-- Top Row -->
-              <div onclick="selectFood('eggs')" class="fridge-hotspot" style="top: 24%; left: 17%; width: 13%; height: 14%;" title="Fresh Eggs"></div>
-              <div onclick="selectFood('salmon')" class="fridge-hotspot" style="top: 24%; left: 31%; width: 14%; height: 14%;" title="Salmon Fillets"></div>
-              <div onclick="selectFood('spinach')" class="fridge-hotspot" style="top: 24%; left: 50%; width: 13%; height: 14%;" title="Baby Spinach"></div>
-              <div onclick="selectFood('oats')" class="fridge-hotspot" style="top: 24%; left: 64%; width: 13%; height: 14%;" title="Rolled Oats"></div>
+                <!-- Main Navy Banner -->
+                <div class="text-center flex-1">
+                  <h3 class="text-2xl sm:text-3xl font-black font-fredoka text-amber-300 tracking-wider drop-shadow-md">
+                    PICK AN ORGAN. FEED IT RIGHT!
+                  </h3>
+                  <p class="text-[11px] text-sky-300 font-semibold uppercase tracking-widest">Investigadores Vinci • Functional Supermarket</p>
+                </div>
 
-              <!-- Middle Row -->
-              <div onclick="selectFood('ginger')" class="fridge-hotspot" style="top: 47%; left: 17%; width: 13%; height: 14%;" title="Fresh Ginger"></div>
-              <div onclick="selectFood('berry_juice')" class="fridge-hotspot" style="top: 47%; left: 32%; width: 11%; height: 14%;" title="Berry Juice"></div>
-              <div onclick="selectFood('broccoli')" class="fridge-hotspot" style="top: 47%; left: 49%; width: 14%; height: 14%;" title="Broccoli"></div>
-              <div onclick="selectFood('garlic')" class="fridge-hotspot" style="top: 47%; left: 64%; width: 13%; height: 14%;" title="Garlic Bulbs"></div>
-
-              <!-- Bottom Row -->
-              <div onclick="selectFood('yogurt')" class="fridge-hotspot" style="top: 70%; left: 17%; width: 13%; height: 14%;" title="Plain Greek Yogurt"></div>
-              <div onclick="selectFood('water')" class="fridge-hotspot" style="top: 70%; left: 34%; width: 10%; height: 14%;" title="Spring Water"></div>
-              <div onclick="selectFood('blueberries')" class="fridge-hotspot" style="top: 70%; left: 50%; width: 13%; height: 14%;" title="Blueberries"></div>
-            </div>
-          </div>
-          <p class="text-xs text-center text-slate-400 mt-2">💡 Click on any food item inside the fridge shelves to inspect details!</p>
-        </div>
-
-        <!-- Food Details Inspector Card (5 Cols) -->
-        <div class="lg:col-span-5 space-y-4">
-          <div id="food-detail-card" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xl transition-all">
-            <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
-              <div id="food-icon-bg" class="w-14 h-14 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl font-bold shadow-inner">
-                🥚
-              </div>
-              <div>
-                <span class="text-xs font-bold text-sky-600 uppercase tracking-wider font-fredoka">SUPERMARKET ITEM</span>
-                <h3 id="food-name" class="text-2xl font-bold font-fredoka text-slate-900">Fresh Eggs</h3>
-              </div>
-            </div>
-
-            <div class="space-y-4 text-sm text-slate-600">
-              <div>
-                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <i class="fa-solid fa-heart-pulse text-rose-500"></i> Primary Beneficiary Organs:
-                </h4>
-                <div id="food-target-organs" class="flex flex-wrap gap-2 mt-2">
-                  <span class="bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded-full text-xs">🧠 Brain</span>
-                  <span class="bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full text-xs">🩺 Liver</span>
+                <!-- Hanging Wood Sign -->
+                <div class="bg-amber-100 border-2 border-amber-700 text-amber-950 px-3 py-1.5 rounded-xl font-fredoka text-center shadow transform rotate-1">
+                  <span class="block text-xs font-bold leading-none text-amber-800">Da Vinci</span>
+                  <span class="block text-sm font-black tracking-tight leading-none text-slate-900 flex items-center gap-1 justify-center">
+                    SUPERMARKET <i class="fa-solid fa-cart-shopping text-emerald-600 text-xs"></i>
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <i class="fa-solid fa-dna text-sky-500"></i> Nutrients Provided:
-                </h4>
-                <p id="food-nutrients" class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-700">
-                  Rich in Choline, High-quality Protein, Omega-3 fatty acids, and Vitamin B12.
-                </p>
-              </div>
+              <!-- MAIN DISPLAY GRID: LEFT CHALKBOARD + CENTRAL FRIDGE SHOWCASE -->
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                
+                <!-- LEFT SIDE CHALKBOARD PANEL (3 COLS) -->
+                <div class="md:col-span-3 bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 flex flex-col justify-between text-slate-300 space-y-4 shadow-xl relative overflow-hidden">
+                  <div class="space-y-4 text-center">
+                    <div class="border-b border-slate-800 pb-2">
+                      <i class="fa-solid fa-brain text-sky-400 text-2xl mb-1"></i>
+                      <span class="block font-fredoka font-bold text-amber-300 text-xs uppercase tracking-wider">FUEL YOUR BODY</span>
+                    </div>
+                    <div class="border-b border-slate-800 pb-2">
+                      <i class="fa-solid fa-heart-pulse text-rose-400 text-2xl mb-1"></i>
+                      <span class="block font-fredoka font-bold text-emerald-400 text-xs uppercase tracking-wider">MAKE HEALTHY CHOICES</span>
+                    </div>
+                    <div class="border-b border-slate-800 pb-2">
+                      <i class="fa-solid fa-virus text-amber-400 text-2xl mb-1"></i>
+                      <span class="block font-fredoka font-bold text-sky-300 text-xs uppercase tracking-wider">TAKE CARE OF WHAT YOU HAVE</span>
+                    </div>
+                    <div>
+                      <i class="fa-solid fa-fire text-orange-400 text-2xl mb-1"></i>
+                      <span class="block font-fredoka font-bold text-rose-300 text-xs uppercase tracking-wider">PREVENT DISEASE</span>
+                    </div>
+                  </div>
 
-              <div>
-                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <i class="fa-solid fa-shield-halved text-emerald-500"></i> Why It Protects Your Organ:
-                </h4>
-                <p id="food-benefits" class="text-slate-600 leading-relaxed">
-                  Choline is essential for brain cell structure and neurotransmitter synthesis, improving memory and focus during class!
-                </p>
+                  <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center text-[10px] text-slate-400">
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Click any food item in the fridge shelves to test organ impact!
+                  </div>
+                </div>
+
+                <!-- CENTRAL DOUBLE GLASS FRIDGE SHOWCASE (9 COLS) -->
+                <div class="md:col-span-9 bg-slate-900 border-4 border-slate-700 rounded-2xl p-3 shadow-2xl relative space-y-4 glass-door">
+                  
+                  <!-- FRIDGE TIER 1: TOP SHELF -->
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-sky-300 px-2">
+                      <span><i class="fa-solid fa-lightbulb text-amber-300"></i> TOP SHELF • PROTEINS &amp; FIBER</span>
+                      <span class="text-slate-400 font-mono text-[10px]">LED COOLING 3°C</span>
+                    </div>
+                    <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-b-4 border-sky-500 rounded-xl p-2.5 shelf-led grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      
+                      <!-- Item 1: Eggs -->
+                      <button onclick="selectFood('eggs')" id="food-btn-eggs" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🥚</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Fresh Eggs</span>
+                        <span class="bg-amber-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">CHOLINE</span>
+                      </button>
+
+                      <!-- Item 2: Salmon -->
+                      <button onclick="selectFood('salmon')" id="food-btn-salmon" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🐟</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Salmon Fillets</span>
+                        <span class="bg-rose-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">OMEGA-3</span>
+                      </button>
+
+                      <!-- Item 3: Spinach -->
+                      <button onclick="selectFood('spinach')" id="food-btn-spinach" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🥬</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Baby Spinach</span>
+                        <span class="bg-emerald-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">IRON &amp; FOLATE</span>
+                      </button>
+
+                      <!-- Item 4: Rolled Oats -->
+                      <button onclick="selectFood('oats')" id="food-btn-oats" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🌾</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Rolled Oats</span>
+                        <span class="bg-yellow-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">BETA-GLUCAN</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- FRIDGE TIER 2: MIDDLE SHELF -->
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-sky-300 px-2">
+                      <span><i class="fa-solid fa-lightbulb text-amber-300"></i> MIDDLE SHELF • ANTIOXIDANTS &amp; ENZYMES</span>
+                      <span class="text-slate-400 font-mono text-[10px]">LED COOLING 3°C</span>
+                    </div>
+                    <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-b-4 border-sky-500 rounded-xl p-2.5 shelf-led grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      
+                      <!-- Item 5: Ginger -->
+                      <button onclick="selectFood('ginger')" id="food-btn-ginger" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🫚</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Fresh Ginger</span>
+                        <span class="bg-amber-300 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">GINGEROL</span>
+                      </button>
+
+                      <!-- Item 6: Berry Juice -->
+                      <button onclick="selectFood('berry_juice')" id="food-btn-berry_juice" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🧃</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Berry Juice</span>
+                        <span class="bg-purple-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">FLAVONOIDS</span>
+                      </button>
+
+                      <!-- Item 7: Broccoli -->
+                      <button onclick="selectFood('broccoli')" id="food-btn-broccoli" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🥦</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Broccoli Florets</span>
+                        <span class="bg-emerald-400 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">SULFORAPHANE</span>
+                      </button>
+
+                      <!-- Item 8: Garlic -->
+                      <button onclick="selectFood('garlic')" id="food-btn-garlic" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🧄</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Garlic Bulbs</span>
+                        <span class="bg-yellow-200 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">ALLICIN</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- FRIDGE TIER 3: BOTTOM SHELF -->
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-sky-300 px-2">
+                      <span><i class="fa-solid fa-lightbulb text-amber-300"></i> BOTTOM SHELF • PROBIOTICS &amp; HYDRATION</span>
+                      <span class="text-slate-400 font-mono text-[10px]">LED COOLING 2°C</span>
+                    </div>
+                    <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-b-4 border-sky-500 rounded-xl p-2.5 shelf-led grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      
+                      <!-- Item 9: Yogurt -->
+                      <button onclick="selectFood('yogurt')" id="food-btn-yogurt" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🥛</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Greek Yogurt</span>
+                        <span class="bg-blue-300 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">PROBIOTICS</span>
+                      </button>
+
+                      <!-- Item 10: Spring Water -->
+                      <button onclick="selectFood('water')" id="food-btn-water" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">💧</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Spring Water</span>
+                        <span class="bg-sky-300 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">PURE H2O</span>
+                      </button>
+
+                      <!-- Item 11: Blueberries -->
+                      <button onclick="selectFood('blueberries')" id="food-btn-blueberries" class="food-shelf-card bg-slate-800/90 hover:bg-sky-950 p-2.5 rounded-xl border border-slate-700 text-center relative group">
+                        <span class="text-3xl block mb-1">🫐</span>
+                        <span class="font-fredoka font-bold text-xs block text-slate-100">Blueberries</span>
+                        <span class="bg-indigo-300 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">ANTHOCYANIN</span>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Quick Select Buttons -->
-          <div class="bg-slate-800 rounded-2xl p-4 text-white border border-slate-700 space-y-3">
-            <h4 class="font-fredoka text-sm font-semibold text-sky-400">Select Food directly:</h4>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-              <button onclick="selectFood('eggs')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🥚 Eggs</button>
-              <button onclick="selectFood('salmon')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🐟 Salmon</button>
-              <button onclick="selectFood('spinach')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🥬 Spinach</button>
-              <button onclick="selectFood('oats')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🌾 Rolled Oats</button>
-              <button onclick="selectFood('ginger')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🫚 Ginger</button>
-              <button onclick="selectFood('berry_juice')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🧃 Berry Juice</button>
-              <button onclick="selectFood('broccoli')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🥦 Broccoli</button>
-              <button onclick="selectFood('garlic')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🧄 Garlic</button>
-              <button onclick="selectFood('yogurt')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🥛 Yogurt</button>
-              <button onclick="selectFood('water')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">💧 Water</button>
-              <button onclick="selectFood('blueberries')" class="p-2 rounded-lg bg-slate-700 hover:bg-sky-600 text-left truncate transition">🫐 Blueberries</button>
+            <!-- MODE B: CUSTOM POSTER IMAGE DISPLAY (HIDDEN UNTIL USER UPLOADS OR TOGGLES) -->
+            <div id="custom-fridge-wrapper" class="hidden relative w-full overflow-hidden bg-slate-950 p-2">
+              <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
+                <img id="custom-poster-img" src="" alt="Custom Poster Image" class="w-full h-auto block object-contain max-h-[700px] mx-auto">
+                
+                <!-- Hotspots Layer -->
+                <div id="custom-hotspot-layer" class="absolute inset-0">
+                  <div onclick="selectFood('eggs')" class="absolute cursor-pointer border-2 border-amber-400/60 bg-amber-400/20 rounded-xl hover:bg-amber-400/50 transition" style="top:22%; left:16%; width:13%; height:14%;" title="Fresh Eggs"></div>
+                  <div onclick="selectFood('salmon')" class="absolute cursor-pointer border-2 border-rose-400/60 bg-rose-400/20 rounded-xl hover:bg-rose-400/50 transition" style="top:22%; left:30%; width:14%; height:14%;" title="Salmon Fillets"></div>
+                  <div onclick="selectFood('spinach')" class="absolute cursor-pointer border-2 border-emerald-400/60 bg-emerald-400/20 rounded-xl hover:bg-emerald-400/50 transition" style="top:22%; left:49%; width:13%; height:14%;" title="Baby Spinach"></div>
+                  <div onclick="selectFood('oats')" class="absolute cursor-pointer border-2 border-yellow-400/60 bg-yellow-400/20 rounded-xl hover:bg-yellow-400/50 transition" style="top:22%; left:63%; width:13%; height:14%;" title="Rolled Oats"></div>
+
+                  <div onclick="selectFood('ginger')" class="absolute cursor-pointer border-2 border-amber-400/60 bg-amber-400/20 rounded-xl hover:bg-amber-400/50 transition" style="top:46%; left:16%; width:13%; height:14%;" title="Fresh Ginger"></div>
+                  <div onclick="selectFood('berry_juice')" class="absolute cursor-pointer border-2 border-purple-400/60 bg-purple-400/20 rounded-xl hover:bg-purple-400/50 transition" style="top:46%; left:31%; width:12%; height:14%;" title="Berry Juice"></div>
+                  <div onclick="selectFood('broccoli')" class="absolute cursor-pointer border-2 border-emerald-400/60 bg-emerald-400/20 rounded-xl hover:bg-emerald-400/50 transition" style="top:46%; left:48%; width:14%; height:14%;" title="Broccoli Florets"></div>
+                  <div onclick="selectFood('garlic')" class="absolute cursor-pointer border-2 border-yellow-400/60 bg-yellow-400/20 rounded-xl hover:bg-yellow-400/50 transition" style="top:46%; left:63%; width:13%; height:14%;" title="Garlic Bulbs"></div>
+
+                  <div onclick="selectFood('yogurt')" class="absolute cursor-pointer border-2 border-sky-400/60 bg-sky-400/20 rounded-xl hover:bg-sky-400/50 transition" style="top:70%; left:16%; width:13%; height:14%;" title="Plain Greek Yogurt"></div>
+                  <div onclick="selectFood('water')" class="absolute cursor-pointer border-2 border-blue-400/60 bg-blue-400/20 rounded-xl hover:bg-blue-400/50 transition" style="top:70%; left:33%; width:11%; height:14%;" title="Spring Water"></div>
+                  <div onclick="selectFood('blueberries')" class="absolute cursor-pointer border-2 border-indigo-400/60 bg-indigo-400/20 rounded-xl hover:bg-indigo-400/50 transition" style="top:70%; left:49%; width:13%; height:14%;" title="Blueberries"></div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
+
+        <!-- FOOD INSPECTOR & SHOPPING LIST SIDEBAR (4 COLS) -->
+        <div class="lg:col-span-4 space-y-4">
+          
+          <!-- SELECTED FOOD DETAILS CARD -->
+          <div id="inspector-card" class="bg-slate-900 border-2 border-sky-500/80 rounded-3xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+              <div id="insp-icon" class="w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-500/40 flex items-center justify-center text-3xl font-bold shadow-inner">
+                🥚
+              </div>
+              <div class="flex-1">
+                <span class="text-[10px] font-bold text-sky-400 uppercase tracking-widest font-fredoka">SUPERMARKET INSPECTOR</span>
+                <h3 id="insp-title" class="text-xl font-bold font-fredoka text-white">Fresh Eggs</h3>
+                <span id="insp-shelf" class="text-xs text-slate-400 block">Top Shelf • Fridge Tier 1</span>
+              </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <!-- Beneficiary Organs -->
+              <div>
+                <span class="font-bold text-amber-300 uppercase tracking-wider text-[10px] block mb-1">
+                  <i class="fa-solid fa-shield-heart text-rose-400"></i> PROTECTS &amp; FEEDS ORGANS:
+                </span>
+                <div id="insp-target-organs" class="flex flex-wrap gap-1.5">
+                  <span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold px-2.5 py-1 rounded-lg">🧠 Brain</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold px-2.5 py-1 rounded-lg">🩺 Liver</span>
+                </div>
+              </div>
+
+              <!-- Key Nutrients -->
+              <div>
+                <span class="font-bold text-sky-300 uppercase tracking-wider text-[10px] block mb-1">
+                  <i class="fa-solid fa-dna text-sky-400"></i> KEY NUTRIENT COMPOUND:
+                </span>
+                <p id="insp-nutrients" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-slate-300 font-medium">
+                  Choline, Protein, Vitamin B12, Lutein
+                </p>
+              </div>
+
+              <!-- Medical/Scientific Benefit -->
+              <div>
+                <span class="font-bold text-emerald-300 uppercase tracking-wider text-[10px] block mb-1">
+                  <i class="fa-solid fa-microscope text-emerald-400"></i> WHY YOUR BODY NEEDS IT:
+                </span>
+                <p id="insp-benefit" class="text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                  Choline is essential for brain cell structure and neurotransmitter synthesis, supporting memory retention during study sessions!
+                </p>
+              </div>
+            </div>
+
+            <!-- Add to Shopping Cart Button -->
+            <button onclick="addSelectedFoodToCart()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-fredoka font-black py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cart-plus"></i> Add to Body's Shopping List
+            </button>
+          </div>
+
+          <!-- LIVE CLIPBOARD: "WHAT'S ON YOUR BODY'S SHOPPING LIST?" -->
+          <div class="bg-amber-100 border-4 border-amber-600 rounded-3xl p-5 text-amber-950 shadow-2xl space-y-3 relative">
+            <div class="flex justify-between items-center border-b-2 border-amber-300 pb-2">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-amber-800 text-xl"></i>
+                <h3 class="font-fredoka font-black text-sm tracking-wide text-amber-950">
+                  WHAT'S ON YOUR BODY'S SHOPPING LIST?
+                </h3>
+              </div>
+              <span id="cart-count-badge" class="bg-amber-900 text-amber-100 font-bold px-2 py-0.5 rounded-full text-xs">
+                0 Items
+              </span>
+            </div>
+
+            <div id="cart-items-list" class="space-y-1.5 max-h-[180px] overflow-y-auto pr-1">
+              <p class="text-xs text-amber-800 italic text-center py-4">Your list is currently empty. Click "Add to List" above!</p>
+            </div>
+
+            <div class="pt-2 border-t border-amber-300/80 flex justify-between items-center text-xs font-bold text-amber-900">
+              <button onclick="clearShoppingCart()" class="text-rose-700 hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i> Clear List
+              </button>
+              <button onclick="switchTab('game')" class="bg-amber-900 hover:bg-slate-900 text-amber-100 px-3 py-1 rounded-xl text-xs font-fredoka transition">
+                Test in Game <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </section>
 
-    <!-- TAB 2: ORGAN LAB (10 ORGANS & PULL CARDS) -->
+    <!-- ==========================================================================
+         TAB 2: ORGAN LAB & INTERACTIVE 'PULL HERE' CARDS (10 ORGANS)
+         ========================================================================== -->
     <section id="sec-organs" class="tab-content hidden space-y-6">
       
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <!-- Top Lab Header -->
+      <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <span class="text-xs font-bold text-sky-600 uppercase tracking-widest font-fredoka">10 KEY ORGANS INVESTIGATED</span>
-          <h2 class="text-2xl font-bold font-fredoka text-slate-900">Interactive Body Anatomy &amp; Data Sheet</h2>
-          <p class="text-sm text-slate-500">Explore each organ's size, weight, function, and recommended foods as created on your A3 Mural!</p>
+          <span class="text-xs font-bold text-sky-400 uppercase tracking-widest font-fredoka">
+            <i class="fa-solid fa-flask-vial"></i> 10 KEY HUMAN ORGANS INVESTIGATED
+          </span>
+          <h2 class="text-2xl font-black font-fredoka text-white">Organ Anatomy &amp; Data Sheet</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Click on any card or pull the <span class="text-amber-400 font-bold">'PULL HERE'</span> tab to reveal deep anatomy facts, organ size, weight, and food shields!
+          </p>
         </div>
-        <div class="flex gap-2">
-          <button onclick="filterOrgans('all')" class="organ-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white">All (10)</button>
-          <button onclick="filterOrgans('vital')" class="organ-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Chest &amp; Brain</button>
-          <button onclick="filterOrgans('digestive')" class="organ-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Digestive System</button>
+
+        <!-- Filter Category Buttons -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="filterOrganCards('all')" class="organ-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold font-fredoka bg-sky-600 text-white shadow">All (10)</button>
+          <button onclick="filterOrganCards('vital')" class="organ-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold font-fredoka bg-slate-800 text-slate-300 hover:bg-slate-700">Chest &amp; Brain</button>
+          <button onclick="filterOrganCards('digestive')" class="organ-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold font-fredoka bg-slate-800 text-slate-300 hover:bg-slate-700">Digestive System</button>
         </div>
       </div>
 
-      <!-- Organ Grid Cards -->
-      <div id="organ-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Cards will be dynamically rendered via JS -->
+      <!-- ORGAN CARDS GRID (10 ORGANS) -->
+      <div id="organ-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered dynamically by JS -->
       </div>
     </section>
 
-    <!-- TAB 3: SHOPPING LIST INTERACTIVE GAME -->
+    <!-- ==========================================================================
+         TAB 3: INTERACTIVE SHOPPING LIST GAME
+         ========================================================================== -->
     <section id="sec-game" class="tab-content hidden space-y-6">
       
-      <div class="bg-gradient-to-r from-emerald-800 to-slate-900 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-emerald-600">
+      <!-- Game Banner -->
+      <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-sky-950 p-6 rounded-3xl border border-emerald-700 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
         <div class="space-y-2">
-          <span class="inline-block bg-emerald-500/30 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/30 uppercase tracking-widest">
-            🎮 Interactive Game
+          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest font-fredoka">
+            🎮 Interactive Challenge
           </span>
-          <h2 class="text-2xl sm:text-3xl font-bold font-fredoka">Fill Your Body's Shopping List!</h2>
-          <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
-            Select an organ mission below and pick the correct healthy foods from the Supermarket shelves to complete the shopping list on the clipboard!
+          <h2 class="text-2xl sm:text-3xl font-black font-fredoka text-white">Fill Your Body's Shopping List!</h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            Choose the correct combination of superfoods required for each organ's vital mission. Collect 100 points per completed mission!
           </p>
         </div>
-        <div class="bg-slate-800/90 p-4 rounded-xl border border-slate-700 text-center min-w-[180px]">
-          <span class="text-xs text-slate-400 block font-bold uppercase">GAME SCORE</span>
-          <span id="game-score" class="text-4xl font-black text-amber-400 font-fredoka">0</span>
-          <span class="text-xs text-emerald-400 block mt-1"><i class="fa-solid fa-trophy"></i> Master Investigator</span>
+
+        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 text-center min-w-[190px]">
+          <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">INVESTIGATOR SCORE</span>
+          <span id="game-score-display" class="text-4xl font-black text-amber-400 font-fredoka">0</span>
+          <span class="text-xs text-emerald-400 block font-semibold mt-1"><i class="fa-solid fa-trophy"></i> Master Nutritionist</span>
         </div>
       </div>
 
-      <!-- Game Interactive Layout -->
+      <!-- Game Layout: Mission + Shelves (7 Cols) & Clipboard Checklist (5 Cols) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Left Column: Mission Control & Fridge Selector (7 Cols) -->
-        <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-lg space-y-6">
-          <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-xl">
-            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider font-fredoka">CURRENT MISSION</span>
-            <h3 id="game-mission-title" class="text-xl font-bold font-fredoka text-slate-900 mt-1">
-              Mission #1: Feed the Brain! 🧠
+        <!-- Left: Mission Brief & Food Picker Shelves (7 Cols) -->
+        <div class="lg:col-span-7 bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+          
+          <div class="bg-slate-950 border-l-4 border-sky-500 p-4 rounded-r-2xl space-y-1">
+            <span class="text-[11px] font-bold text-sky-400 uppercase tracking-widest font-fredoka">MISSION OBJECTIVE</span>
+            <h3 id="game-mission-title" class="text-xl font-bold font-fredoka text-amber-300">
+              Mission #1: Brain Power Boost 🧠
             </h3>
-            <p id="game-mission-desc" class="text-sm text-slate-600 mt-1">
-              Select 3 foods rich in Omega-3, choline, and antioxidants to boost memory and brain health.
+            <p id="game-mission-desc" class="text-xs text-slate-300 leading-relaxed">
+              Select 3 foods rich in Omega-3, choline, and antioxidants to boost neuronal memory and focus.
             </p>
           </div>
 
-          <!-- Supermarket Food Grid for Game -->
           <div>
-            <h4 class="font-fredoka text-slate-800 font-semibold mb-3 flex items-center justify-between">
-              <span>Pick Foods from Supermarket Shelves:</span>
-              <span class="text-xs text-slate-400">Click to add to list</span>
+            <h4 class="font-fredoka text-slate-200 font-bold mb-3 flex items-center justify-between text-sm">
+              <span>Click items to add to the shopping cart:</span>
+              <span id="game-items-limit-tag" class="text-xs text-sky-400 font-normal">Need 3 Foods</span>
             </h4>
-            <div id="game-food-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <!-- Rendered via JS -->
+            
+            <div id="game-food-picker-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- Rendered dynamically -->
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Interactive Clipboard (5 Cols) -->
-        <div class="lg:col-span-5 bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 shadow-xl space-y-4 relative">
-          <!-- Clipboard Header Graphic -->
-          <div class="flex items-center justify-between border-b-2 border-amber-200 pb-3">
+        <!-- Right: Interactive Clipboard Checklist (5 Cols) -->
+        <div class="lg:col-span-5 bg-amber-100 border-4 border-amber-600 p-6 rounded-3xl text-amber-950 shadow-2xl space-y-4">
+          <div class="flex justify-between items-center border-b-2 border-amber-300 pb-3">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-clipboard-list text-amber-700 text-2xl"></i>
-              <h3 class="font-fredoka font-bold text-lg text-amber-900 tracking-wide">
-                WHAT'S ON YOUR BODY'S SHOPPING LIST?
+              <i class="fa-solid fa-cart-shopping text-amber-800 text-2xl"></i>
+              <h3 class="font-fredoka font-black text-base text-amber-950 tracking-wide">
+                MISSION CHECKLIST
               </h3>
             </div>
-            <span id="game-progress" class="bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-full text-xs">
-              0 / 3 Foods
+            <span id="game-progress-badge" class="bg-amber-900 text-amber-100 font-bold px-3 py-1 rounded-full text-xs">
+              0 / 3
             </span>
           </div>
 
-          <!-- Clipboard Checklist -->
-          <div id="game-clipboard-items" class="space-y-2.5 min-h-[220px]">
-            <!-- Items added here -->
+          <!-- Items in cart -->
+          <div id="game-cart-slots" class="space-y-2 min-h-[200px]">
+            <!-- Added items appear here -->
           </div>
 
-          <!-- Action Buttons -->
           <div class="pt-2 flex gap-3">
-            <button onclick="submitGameList()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-fredoka font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-check-double"></i> Verify Shopping List
+            <button onclick="verifyGameList()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-fredoka font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Verify List
             </button>
-            <button onclick="resetGameMission()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 rounded-xl transition">
+            <button onclick="resetGameCart()" class="bg-amber-300 hover:bg-amber-400 text-amber-950 font-bold px-4 rounded-xl transition">
               <i class="fa-solid fa-rotate-right"></i>
             </button>
           </div>
 
-          <!-- Feedback Toast -->
-          <div id="game-feedback" class="hidden p-3 rounded-xl text-xs font-bold text-center"></div>
+          <div id="game-toast-feedback" class="hidden p-3 rounded-xl text-xs font-bold text-center"></div>
         </div>
+
       </div>
     </section>
 
-    <!-- TAB 4: ENGLISH COMPARATIVE QUIZ (BNCC EF08LI15) -->
+    <!-- ==========================================================================
+         TAB 4: BNCC EF08LI15 ENGLISH GRAMMAR & SCIENCE QUIZ
+         ========================================================================== -->
     <section id="sec-quiz" class="tab-content hidden space-y-6">
       
-      <div class="bg-gradient-to-r from-blue-900 to-indigo-950 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-blue-800">
+      <!-- Quiz Banner -->
+      <div class="bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 p-6 rounded-3xl border border-purple-800 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
         <div class="space-y-2">
-          <span class="inline-block bg-sky-500/30 text-sky-300 text-xs font-bold px-3 py-1 rounded-full border border-sky-400/30 uppercase tracking-widest">
-            🇬🇧 English Grammar &amp; Science (BNCC EF08LI15)
+          <span class="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest font-fredoka">
+            🇬🇧 BNCC EF08LI15 • Comparatives &amp; Superlatives
           </span>
-          <h2 class="text-2xl sm:text-3xl font-bold font-fredoka">Organ Comparatives &amp; Superlatives Challenge</h2>
-          <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
-            Practice comparative adjectives (<em>larger than, heavier than, most essential</em>) using the scientific data researched by the 8th grade teams!
+          <h2 class="text-2xl sm:text-3xl font-black font-fredoka text-white">Organ &amp; Nutrition English Challenge</h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            Practice comparative adjectives (<em>larger than, heavier than, most essential, better than</em>) while reviewing biological organ facts!
           </p>
         </div>
       </div>
 
-      <!-- Quiz Card Container -->
-      <div class="max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8 space-y-6">
-        <div class="flex justify-between items-center text-xs font-bold text-slate-400 border-b pb-3">
-          <span id="quiz-progress-text">Question 1 of 5</span>
-          <span id="quiz-score-badge" class="bg-sky-100 text-sky-800 px-3 py-1 rounded-full font-fredoka">Score: 0</span>
+      <!-- Quiz Box -->
+      <div class="max-w-3xl mx-auto bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex justify-between items-center text-xs font-bold text-slate-400 border-b border-slate-800 pb-3">
+          <span id="quiz-question-counter">Question 1 of 5</span>
+          <span id="quiz-score-display" class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full font-fredoka">Score: 0 / 100</span>
         </div>
 
         <div>
-          <h3 id="quiz-question" class="text-xl font-bold font-fredoka text-slate-900 mb-2">
-            "The liver is __________ than the heart."
+          <h3 id="quiz-question-text" class="text-xl sm:text-2xl font-bold font-fredoka text-white mb-2">
+            "The liver (~1.5 kg) is __________ than the heart (~300 g)."
           </h3>
-          <p id="quiz-hint" class="text-xs text-slate-500 italic">
-            Hint: Liver ≈ 1.5 kg vs Heart ≈ 300 g.
+          <p id="quiz-hint-text" class="text-xs text-sky-400 italic">
+            Hint: Compare the weight of both organs using standard English comparatives.
           </p>
         </div>
 
-        <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <!-- Quiz options injected via JS -->
+        <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Options rendered via JS -->
         </div>
 
-        <div id="quiz-explanation" class="hidden p-4 rounded-xl text-sm leading-relaxed border"></div>
+        <div id="quiz-explanation-box" class="hidden p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border"></div>
 
         <div class="flex justify-end pt-2">
-          <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden bg-sky-600 hover:bg-sky-700 text-white font-fredoka font-bold py-2.5 px-6 rounded-xl shadow transition">
+          <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden bg-sky-600 hover:bg-sky-700 text-white font-fredoka font-bold py-2.5 px-6 rounded-xl shadow-lg transition">
             Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
           </button>
         </div>
@@ -395,350 +652,489 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-6 mt-12">
+  <footer class="bg-slate-950 border-t border-slate-800 py-6 text-xs text-slate-400 mt-12">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
       <div>
-        <p class="font-bold text-slate-200 font-fredoka text-sm">Investigadores Vinci 2026 • 8º Ano Fundamental</p>
-        <p class="mt-1">Learning to care for life - Healthy Education - Teaching people about nutrition.</p>
+        <p class="font-bold text-slate-200 font-fredoka text-sm">Da Vinci Supermarket • Investigadores Vinci 8º Ano</p>
+        <p class="mt-0.5">Integration of Biology, Nutrition, and English Language Skills (BNCC EF08LI15).</p>
       </div>
-      <p class="text-slate-500">Desenvolvido para revisão e exposição do projeto escolar.</p>
+      <p class="text-slate-500">Curriculum Project • 2026 Edition</p>
     </div>
   </footer>
 
   <script>
     /* ==========================================================================
-       DATA STRUCTURES: FOODS & ORGANS (COMPLETE SCIENTIFIC DATA)
+       DATA STRUCTURE 1: SUPERFOODS & INGREDIENTS
        ========================================================================== */
-    
-    const FOODS = {
+    const FOOD_DATA = {
       eggs: {
         id: 'eggs',
         name: 'Fresh Eggs',
         icon: '🥚',
+        shelf: 'Top Shelf (Tier 1)',
         targets: ['Brain', 'Liver'],
         nutrients: 'Choline, High-Quality Protein, Vitamin B12, Lutein',
-        benefits: 'Choline builds healthy brain neurotransmitters and protects liver fat metabolism.',
-        shelf: 'Top Shelf (Left)'
+        benefit: 'Choline is necessary for building brain cell membranes and memory neurotransmitters while protecting liver lipid processing.',
       },
       salmon: {
         id: 'salmon',
         name: 'Salmon Fillets',
         icon: '🐟',
+        shelf: 'Top Shelf (Tier 1)',
         targets: ['Heart', 'Brain'],
-        nutrients: 'Omega-3 Fatty Acids, Protein, Vitamin D, Selenium',
-        benefits: 'Omega-3s reduce arterial inflammation, support heart rhythm, and protect brain memory.',
-        shelf: 'Top Shelf (Center-Left)'
+        nutrients: 'Omega-3 EPA/DHA Fatty Acids, Selenium, Protein',
+        benefit: 'Omega-3 fatty acids maintain blood vessel elasticity, regulate heart rhythms, and protect neuron myelin sheaths.',
       },
       spinach: {
         id: 'spinach',
         name: 'Baby Spinach',
         icon: '🥬',
+        shelf: 'Top Shelf (Tier 1)',
         targets: ['Lungs', 'Liver', 'Spleen'],
-        nutrients: 'Iron, Vitamin C, Folate, Chlorophyll, Antioxidants',
-        benefits: 'Iron boosts red blood cell oxygen carrying for lungs; antioxidants cleanse liver toxins.',
-        shelf: 'Top Shelf (Center-Right)'
+        nutrients: 'Iron, Vitamin C, Folate, Chlorophyll',
+        benefit: 'Iron is crucial for hemoglobin oxygen transport in lungs; chlorophyll aids hepatic detoxification.',
       },
       oats: {
         id: 'oats',
         name: 'Rolled Oats',
         icon: '🌾',
+        shelf: 'Top Shelf (Tier 1)',
         targets: ['Stomach', 'Intestines', 'Pancreas'],
-        nutrients: 'Beta-Glucan Soluble Fiber, Complex Carbohydrates',
-        benefits: 'Beta-glucan fibers slow glucose absorption (helping pancreas) and smooth intestinal digestion.',
-        shelf: 'Top Shelf (Right)'
+        nutrients: 'Beta-Glucan Soluble Fiber, Vitamin B Complex',
+        benefit: 'Soluble fibers create a viscous gel in gut, stabilizing blood glucose spikes to assist the pancreas.',
       },
       ginger: {
         id: 'ginger',
-        name: 'Fresh Ginger Root',
+        name: 'Fresh Ginger',
         icon: '🫚',
+        shelf: 'Middle Shelf (Tier 2)',
         targets: ['Stomach', 'Intestines'],
-        nutrients: 'Gingerol, Anti-inflammatory Compounds',
-        benefits: 'Soothes stomach lining, reduces digestive cramps, and accelerates gastric emptying.',
-        shelf: 'Middle Shelf (Left)'
+        nutrients: 'Gingerol, Active Phytochemicals',
+        benefit: 'Gingerol speeds up gastric emptying, reduces intestinal spasms, and relieves nausea.',
       },
       berry_juice: {
         id: 'berry_juice',
-        name: 'Berry Juice / Cranberry',
+        name: 'Berry Juice',
         icon: '🧃',
+        shelf: 'Middle Shelf (Tier 2)',
         targets: ['Kidneys', 'Bladder'],
-        nutrients: 'Proanthocyanidins, Vitamin C, Flavonoids',
-        benefits: 'Prevents harmful bacteria from adhering to bladder and kidney tract walls.',
-        shelf: 'Middle Shelf (Center)'
+        nutrients: 'Proanthocyanidins (PACs), Vitamin C',
+        benefit: 'PAC compounds inhibit E. coli bacteria from attaching to bladder lining and kidney tubules.',
       },
       broccoli: {
         id: 'broccoli',
         name: 'Broccoli Florets',
         icon: '🥦',
+        shelf: 'Middle Shelf (Tier 2)',
         targets: ['Lungs', 'Liver', 'Pancreas'],
-        nutrients: 'Sulforaphane, Fiber, Vitamin C, Vitamin K',
-        benefits: 'Sulforaphane activates liver detox enzymes and protects lung tissues against air pollutants.',
-        shelf: 'Middle Shelf (Center-Right)'
+        nutrients: 'Sulforaphane, Glucosinolates, Fiber',
+        benefit: 'Sulforaphane activates Phase-II detoxification enzymes in the liver and protects bronchial cells.',
       },
       garlic: {
         id: 'garlic',
         name: 'Garlic Bulbs',
         icon: '🧄',
+        shelf: 'Middle Shelf (Tier 2)',
         targets: ['Heart', 'Spleen'],
-        nutrients: 'Allicin, Sulfur Compounds, Vitamin B6',
-        benefits: 'Allicin lowers blood pressure and cholesterol while stimulating spleen immune activity.',
-        shelf: 'Middle Shelf (Right)'
+        nutrients: 'Allicin, Organosulfur Compounds',
+        benefit: 'Allicin helps dilate coronary arteries to lower blood pressure and stimulates spleen white blood cell activity.',
       },
       yogurt: {
         id: 'yogurt',
-        name: 'Plain Greek Yogurt',
+        name: 'Greek Yogurt',
         icon: '🥛',
+        shelf: 'Bottom Shelf (Tier 3)',
         targets: ['Stomach', 'Intestines'],
-        nutrients: 'Probiotics (Live Bacteria), Calcium, Protein',
-        benefits: 'Populates intestinal microbiome with healthy bacteria for gut digestion and immunity.',
-        shelf: 'Bottom Shelf (Left)'
+        nutrients: 'Live Probiotics (Lactobacillus), Calcium',
+        benefit: 'Replenishes healthy gut bacteria in the intestinal microbiome, strengthening immune defense.',
       },
       water: {
         id: 'water',
         name: 'Spring Water',
         icon: '💧',
+        shelf: 'Bottom Shelf (Tier 3)',
         targets: ['Kidneys', 'Bladder', 'Liver', 'All Organs'],
-        nutrients: 'Pure H2O, Essential Minerals (Calcium, Magnesium)',
-        benefits: 'Filters kidney waste, prevents bladder infections, and keeps blood fluid for heart circulation.',
-        shelf: 'Bottom Shelf (Center)'
+        nutrients: 'Pure H2O, Minerals (Magnesium, Calcium)',
+        benefit: 'Essential for renal filtration, waste product flushing, and maintaining circulating blood volume.',
       },
       blueberries: {
         id: 'blueberries',
-        name: 'Fresh Blueberries',
+        name: 'Blueberries',
         icon: '🫐',
+        shelf: 'Bottom Shelf (Tier 3)',
         targets: ['Brain', 'Heart'],
-        nutrients: 'Anthocyanins, Vitamin C, Antioxidants',
-        benefits: 'Powerful antioxidants cross the blood-brain barrier to protect neurons from aging.',
-        shelf: 'Bottom Shelf (Right)'
+        nutrients: 'Anthocyanins, Polyphenols, Vitamin C',
+        benefit: 'Powerful antioxidants cross the blood-brain barrier to clear free radicals and delay memory decline.',
       }
     };
 
-    const ORGANS = [
+    /* ==========================================================================
+       DATA STRUCTURE 2: 10 HUMAN ORGANS (SCIENTIFIC SPECS)
+       ========================================================================== */
+    const ORGAN_DATA = [
       {
         id: 'heart',
         name: 'Heart',
-        portuguese: 'Coração',
+        ptName: 'Coração',
         category: 'vital',
         icon: '❤️',
-        size: 'Approx. size of a closed fist (~12 x 9 cm)',
+        size: 'Size of a closed fist (~12 cm long)',
         weight: '250 - 350 grams',
-        function: 'Pumps oxygen-rich blood throughout the entire body via blood vessels.',
-        foods: ['Salmon Fillets', 'Garlic Bulbs', 'Blueberries', 'Avocado', 'Walnuts'],
-        group: 'Group 1 (Equipe 1)',
-        color: 'border-rose-500 bg-rose-50'
+        function: 'Pumps blood containing oxygen and nutrients through a 100,000 km network of blood vessels.',
+        foods: ['Salmon Fillets', 'Garlic Bulbs', 'Blueberries'],
+        extraFact: 'Beats approximately 100,000 times per day!',
+        groupTag: 'Group 1 (Equipe 1)',
+        borderColor: 'border-rose-500',
+        bgColor: 'bg-rose-500/10'
       },
       {
         id: 'brain',
         name: 'Brain',
-        portuguese: 'Cérebro',
+        ptName: 'Cérebro',
         category: 'vital',
         icon: '🧠',
-        size: 'Approx. size of a coconut / two joined fists (~15 cm)',
+        size: 'Size of a medium coconut (~15 cm wide)',
         weight: '1.3 - 1.4 kilograms',
-        function: 'Controls thoughts, memory, emotions, motor skills, and body regulation.',
-        foods: ['Fresh Eggs', 'Salmon Fillets', 'Fresh Blueberries', 'Walnuts'],
-        group: 'Group 2 (Equipe 2)',
-        color: 'border-sky-500 bg-sky-50'
+        function: 'Consumes 20% of body energy to process senses, memory, emotions, and movement.',
+        foods: ['Fresh Eggs', 'Salmon Fillets', 'Blueberries'],
+        extraFact: 'Contains roughly 86 billion neurons communicating via electrical signals.',
+        groupTag: 'Group 2 (Equipe 2)',
+        borderColor: 'border-sky-500',
+        bgColor: 'bg-sky-500/10'
       },
       {
         id: 'lungs',
         name: 'Lungs',
-        portuguese: 'Pulmões',
+        ptName: 'Pulmões',
         category: 'vital',
         icon: '🫁',
-        size: 'Approx. size of a pair of large grapefruits (~25 cm tall)',
+        size: 'Pair of cone organs (~25 cm tall)',
         weight: '1.1 - 1.2 kilograms (both)',
-        function: 'Takes in oxygen from the air and expels carbon dioxide waste.',
-        foods: ['Baby Spinach', 'Broccoli Florets', 'Apples', 'Citrus Fruits'],
-        group: 'Group 1 (Equipe 1)',
-        color: 'border-blue-500 bg-blue-50'
+        function: 'Exchanges oxygen gas into bloodstream while releasing metabolic carbon dioxide.',
+        foods: ['Baby Spinach', 'Broccoli Florets'],
+        extraFact: 'Contains 300 million alveoli sacs with a surface area equal to a tennis court!',
+        groupTag: 'Group 1 (Equipe 1)',
+        borderColor: 'border-blue-500',
+        bgColor: 'bg-blue-500/10'
       },
       {
         id: 'stomach',
         name: 'Stomach',
-        portuguese: 'Estômago',
+        ptName: 'Estômago',
         category: 'digestive',
         icon: '🫄',
-        size: 'Approx. size of a cantaloupe melon (~25 cm long)',
+        size: 'Cantaloupe melon shape (~25 cm length)',
         weight: '150 - 200 grams (empty)',
-        function: 'Breaks down ingested food using gastric acids and digestive enzymes.',
-        foods: ['Plain Greek Yogurt', 'Fresh Ginger Root', 'Rolled Oats'],
-        group: 'Group 2 (Equipe 2)',
-        color: 'border-amber-500 bg-amber-50'
+        function: 'Churns food with hydrochloric acid (pH 1.5-2.0) and pepsin enzymes to break proteins.',
+        foods: ['Greek Yogurt', 'Fresh Ginger', 'Rolled Oats'],
+        extraFact: 'The stomach lining completely replaces itself every 3 to 5 days to avoid self-digestion!',
+        groupTag: 'Group 2 (Equipe 2)',
+        borderColor: 'border-amber-500',
+        bgColor: 'bg-amber-500/10'
       },
       {
         id: 'liver',
         name: 'Liver',
-        portuguese: 'Fígado',
+        ptName: 'Fígado',
         category: 'digestive',
         icon: '🩺',
-        size: 'Approx. size of an American Football (~20 cm wide)',
+        size: 'Football size (~20 cm wide)',
         weight: '1.4 - 1.6 kilograms (Largest internal organ!)',
-        function: 'Cleans toxins from blood, produces bile, and stores glycogen energy.',
-        foods: ['Baby Spinach', 'Broccoli Florets', 'Fresh Eggs', 'Citrus Fruits'],
-        group: 'Group 4 (Equipe 4)',
-        color: 'border-emerald-500 bg-emerald-50'
+        function: 'Performs 500+ metabolic jobs: cleans toxins, produces bile, and stores glucose glycogen.',
+        foods: ['Baby Spinach', 'Broccoli Florets', 'Fresh Eggs'],
+        extraFact: 'It is the only internal human organ capable of regenerating lost tissue!',
+        groupTag: 'Group 4 (Equipe 4)',
+        borderColor: 'border-emerald-500',
+        bgColor: 'bg-emerald-500/10'
       },
       {
         id: 'kidneys',
         name: 'Kidneys',
-        portuguese: 'Rins',
+        ptName: 'Rins',
         category: 'digestive',
         icon: '🫘',
-        size: 'Approx. size of a fist or large mango (~10-12 cm)',
+        size: 'Fist / large bean (~10-12 cm)',
         weight: '130 - 160 grams each',
-        function: 'Filter metabolic waste, excess salt, and water from blood to produce urine.',
-        foods: ['Spring Water', 'Berry Juice', 'Beans', 'Red Berries'],
-        group: 'Group 4 (Equipe 4)',
-        color: 'border-teal-500 bg-teal-50'
+        function: 'Filter 180 liters of blood daily to extract toxins, balancing body salts and water into urine.',
+        foods: ['Spring Water', 'Berry Juice'],
+        extraFact: 'Each kidney contains over 1 million microscopic filtering units called nephrons.',
+        groupTag: 'Group 4 (Equipe 4)',
+        borderColor: 'border-teal-500',
+        bgColor: 'bg-teal-500/10'
       },
       {
         id: 'intestines',
         name: 'Intestines',
-        portuguese: 'Intestinos',
+        ptName: 'Intestinos',
         category: 'digestive',
         icon: '🧬',
-        size: 'Total length approx. 6 to 7 meters folded in abdomen',
+        size: '6 to 7 meters long folded in abdomen',
         weight: '1.5 - 2.0 kilograms',
-        function: 'Absorbs essential nutrients, vitamins, and water into the bloodstream.',
-        foods: ['Plain Greek Yogurt', 'Rolled Oats', 'Fresh Ginger Root', 'Bananas'],
-        group: 'Group 5 (Equipe 5)',
-        color: 'border-indigo-500 bg-indigo-50'
+        function: 'Small intestine absorbs 90% of nutrients; large intestine absorbs water and houses microbiome.',
+        foods: ['Greek Yogurt', 'Rolled Oats', 'Fresh Ginger'],
+        extraFact: 'Houses 100 trillion microbial cells that produce 90% of your body\'s serotonin!',
+        groupTag: 'Group 5 (Equipe 5)',
+        borderColor: 'border-indigo-500',
+        bgColor: 'bg-indigo-500/10'
       },
       {
         id: 'pancreas',
         name: 'Pancreas',
-        portuguese: 'Pâncreas',
+        ptName: 'Pâncreas',
         category: 'digestive',
         icon: '🧪',
-        size: 'Approx. size of a medium banana (~15 cm long)',
+        size: 'Banana-shaped gland (~15 cm long)',
         weight: '70 - 100 grams',
-        function: 'Produces insulin to control blood sugar levels and digestive enzymes.',
-        foods: ['Rolled Oats', 'Broccoli Florets', 'Beans', 'Garlic Bulbs'],
-        group: 'Group 3 (Equipe 3)',
-        color: 'border-purple-500 bg-purple-50'
+        function: 'Secretes insulin hormone to regulate blood glucose and digestive enzymes (lipase, amylase).',
+        foods: ['Rolled Oats', 'Broccoli Florets'],
+        extraFact: 'Islets of Langerhans cells constantly measure blood sugar to release precise insulin micro-doses.',
+        groupTag: 'Group 3 (Equipe 3)',
+        borderColor: 'border-purple-500',
+        bgColor: 'bg-purple-500/10'
       },
       {
         id: 'spleen',
         name: 'Spleen',
-        portuguese: 'Baço',
+        ptName: 'Baço',
         category: 'vital',
         icon: '🛡️',
-        size: 'Approx. size of an avocado / fist (~12 cm)',
+        size: 'Avocado size (~12 cm long)',
         weight: '150 - 200 grams',
-        function: 'Filters old red blood cells and supports the immune system against infections.',
-        foods: ['Baby Spinach', 'Garlic Bulbs', 'Citrus Fruits'],
-        group: 'Group 5 (Equipe 5)',
-        color: 'border-fuchsia-500 bg-fuchsia-50'
+        function: 'Filters worn-out red blood cells and stores white blood cells for rapid immune protection.',
+        foods: ['Baby Spinach', 'Garlic Bulbs'],
+        extraFact: 'Acts as a blood reservoir, holding extra oxygenated blood for emergency physical strain.',
+        groupTag: 'Group 5 (Equipe 5)',
+        borderColor: 'border-fuchsia-500',
+        bgColor: 'bg-fuchsia-500/10'
       },
       {
         id: 'bladder',
         name: 'Bladder',
-        portuguese: 'Bexiga',
+        ptName: 'Bexiga',
         category: 'digestive',
         icon: '💧',
-        size: 'Approx. size of a pear (empty) to a grapefruit (full)',
+        size: 'Pear size (empty) to grapefruit (full)',
         weight: '60 - 150 grams (empty)',
-        function: 'Stores urine until it is excreted safely from the human body.',
-        foods: ['Spring Water', 'Berry Juice / Cranberry'],
-        group: 'Group 3 (Equipe 3)',
-        color: 'border-cyan-500 bg-cyan-50'
+        function: 'Flexible muscular balloon that securely holds 400-600 mL of urine until excretion.',
+        foods: ['Spring Water', 'Berry Juice'],
+        extraFact: 'Made of detrusor muscle that stretches smoothly without increasing internal pressure!',
+        groupTag: 'Group 3 (Equipe 3)',
+        borderColor: 'border-cyan-500',
+        bgColor: 'bg-cyan-500/10'
       }
     ];
 
     /* ==========================================================================
-       TAB SWITCHING LOGIC
+       APP GLOBAL STATE
+       ========================================================================== */
+    let currentSelectedFoodKey = 'eggs';
+    let userShoppingList = [];
+    let gameScore = 0;
+    let currentGameMissionIdx = 0;
+    let gameCartSelection = [];
+
+    /* ==========================================================================
+       TAB SWITCHING SYSTEM
        ========================================================================== */
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('bg-sky-600', 'text-white', 'shadow');
-        btn.classList.add('text-slate-300');
+        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-lg');
+        btn.classList.add('text-slate-400');
       });
 
       document.getElementById(`sec-${tabId}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`tab-${tabId}`);
-      activeBtn.classList.add('bg-sky-600', 'text-white', 'shadow');
-      activeBtn.classList.remove('text-slate-300');
+      activeBtn.classList.add('bg-sky-600', 'text-white', 'shadow-lg');
+      activeBtn.classList.remove('text-slate-400');
     }
 
     /* ==========================================================================
-       TAB 1: FOOD SELECTOR LOGIC
+       FRIDGE DISPLAY MODE TOGGLE & CUSTOM IMAGE UPLOADER
+       ========================================================================== */
+    function setFridgeDisplayMode(mode) {
+      const vectorWrapper = document.getElementById('vector-fridge-wrapper');
+      const customWrapper = document.getElementById('custom-fridge-wrapper');
+      const btnVector = document.getElementById('btn-mode-vector');
+      const btnCustom = document.getElementById('btn-mode-custom');
+      const badge = document.getElementById('view-mode-badge');
+
+      if (mode === 'vector') {
+        vectorWrapper.classList.remove('hidden');
+        customWrapper.classList.add('hidden');
+        btnVector.className = 'px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition bg-sky-600 text-white shadow';
+        btnCustom.className = 'px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition text-slate-300 hover:text-white hover:bg-slate-800';
+        badge.textContent = 'Mode: Vector Fridge Replica';
+      } else {
+        const img = document.getElementById('custom-poster-img');
+        if (!img.src || img.src === window.location.href) {
+          alert("Please upload a custom poster image first using the 'Upload Poster' button!");
+          return;
+        }
+        vectorWrapper.classList.add('hidden');
+        customWrapper.classList.remove('hidden');
+        btnCustom.className = 'px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition bg-sky-600 text-white shadow';
+        btnVector.className = 'px-3 py-1.5 rounded-xl font-fredoka text-xs font-bold transition text-slate-300 hover:text-white hover:bg-slate-800';
+        badge.textContent = 'Mode: Custom Poster Image';
+      }
+    }
+
+    function handlePosterImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('custom-poster-img');
+          img.src = e.target.result;
+          setFridgeDisplayMode('custom');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    /* ==========================================================================
+       FOOD SELECTION & INSPECTOR
        ========================================================================== */
     function selectFood(foodKey) {
-      const food = FOODS[foodKey];
+      currentSelectedFoodKey = foodKey;
+      const food = FOOD_DATA[foodKey];
       if (!food) return;
 
-      // Update Card UI
-      document.getElementById('food-icon-bg').textContent = food.icon;
-      document.getElementById('food-name').textContent = food.name;
-      document.getElementById('food-nutrients').textContent = food.nutrients;
-      document.getElementById('food-benefits').textContent = food.benefits;
+      // Update Inspector UI
+      document.getElementById('insp-icon').textContent = food.icon;
+      document.getElementById('insp-title').textContent = food.name;
+      document.getElementById('insp-shelf').textContent = food.shelf;
+      document.getElementById('insp-nutrients').textContent = food.nutrients;
+      document.getElementById('insp-benefit').textContent = food.benefit;
 
       // Render Targets
-      const targetsContainer = document.getElementById('food-target-organs');
+      const targetsContainer = document.getElementById('insp-target-organs');
       targetsContainer.innerHTML = food.targets.map(t => `
-        <span class="bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded-full text-xs flex items-center gap-1">
-          <i class="fa-solid fa-circle-dot text-sky-600 text-[10px]"></i> ${t}
+        <span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 text-[11px]">
+          <i class="fa-solid fa-circle-dot text-sky-400 text-[9px]"></i> ${t}
         </span>
       `).join('');
 
-      // Play subtle audio tone
-      playClickSound();
+      // Highlight shelf item buttons
+      document.querySelectorAll('.food-shelf-card').forEach(btn => btn.classList.remove('active-item', 'ring-4', 'ring-amber-400'));
+      const activeBtn = document.getElementById(`food-btn-${foodKey}`);
+      if (activeBtn) activeBtn.classList.add('active-item', 'ring-4', 'ring-amber-400');
+    }
+
+    function addSelectedFoodToCart() {
+      const food = FOOD_DATA[currentSelectedFoodKey];
+      if (!food) return;
+
+      if (!userShoppingList.includes(food.id)) {
+        userShoppingList.push(food.id);
+        renderUserShoppingList();
+      }
+    }
+
+    function removeCartItem(foodId) {
+      userShoppingList = userShoppingList.filter(id => id !== foodId);
+      renderUserShoppingList();
+    }
+
+    function clearShoppingCart() {
+      userShoppingList = [];
+      renderUserShoppingList();
+    }
+
+    function renderUserShoppingList() {
+      const container = document.getElementById('cart-items-list');
+      const badge = document.getElementById('cart-count-badge');
+      badge.textContent = `${userShoppingList.length} Items`;
+
+      if (userShoppingList.length === 0) {
+        container.innerHTML = `<p class="text-xs text-amber-800 italic text-center py-4">Your list is currently empty. Click "Add to List" above!</p>`;
+        return;
+      }
+
+      container.innerHTML = userShoppingList.map(id => {
+        const item = FOOD_DATA[id];
+        return `
+          <div class="flex items-center justify-between bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm text-xs font-bold text-amber-950">
+            <div class="flex items-center gap-2">
+              <span class="text-base">${item.icon}</span>
+              <span>${item.name}</span>
+            </div>
+            <button onclick="removeCartItem('${id}')" class="text-rose-600 hover:text-rose-800 p-1">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
     }
 
     /* ==========================================================================
-       TAB 2: ORGAN CARDS RENDERER & FILTER
+       ORGAN LAB RENDERER & PULL-TABS
        ========================================================================== */
-    function renderOrganCards(filter = 'all') {
-      const container = document.getElementById('organ-cards-container');
-      const filtered = filter === 'all' ? ORGANS : ORGANS.filter(o => o.category === filter);
+    function renderOrganLabCards(filter = 'all') {
+      const container = document.getElementById('organ-grid-container');
+      const list = filter === 'all' ? ORGAN_DATA : ORGAN_DATA.filter(o => o.category === filter);
 
-      container.innerHTML = filtered.map(organ => `
-        <div class="pull-tab-animation bg-white rounded-2xl border-2 ${organ.color.split(' ')[0]} p-6 shadow-md hover:shadow-xl relative overflow-hidden flex flex-col justify-between">
+      container.innerHTML = list.map(organ => `
+        <div class="pull-tab-container bg-slate-900 rounded-3xl border-2 ${organ.borderColor} p-5 shadow-xl space-y-4 relative overflow-hidden flex flex-col justify-between">
           
-          <!-- PULL HERE BADGE -->
-          <div class="absolute -top-1 -right-1 bg-amber-400 text-amber-950 font-black text-[10px] px-3 py-1 rounded-bl-xl shadow font-fredoka uppercase tracking-wider flex items-center gap-1">
-            <i class="fa-solid fa-angles-down"></i> PULL HERE
-          </div>
-
           <div>
             <!-- Header -->
-            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
-              <span class="text-4xl">${organ.icon}</span>
-              <div>
-                <h3 class="font-bold text-xl font-fredoka text-slate-900">${organ.name} <span class="text-xs font-normal text-slate-400">(${organ.portuguese})</span></h3>
-                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md">${organ.group}</span>
+            <div class="flex justify-between items-start border-b border-slate-800 pb-3 mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-4xl">${organ.icon}</span>
+                <div>
+                  <h3 class="font-fredoka font-bold text-xl text-white">${organ.name}</h3>
+                  <span class="text-xs text-slate-400 font-medium">(${organ.ptName})</span>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-sky-300 bg-sky-950 px-2.5 py-1 rounded-full border border-sky-800 font-fredoka">
+                ${organ.groupTag}
+              </span>
+            </div>
+
+            <!-- Measurements -->
+            <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+              <div class="bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
+                <span class="text-slate-400 block font-bold text-[9px] uppercase tracking-wider">SIZE SPEC</span>
+                <span class="font-bold text-slate-200">${organ.size}</span>
+              </div>
+              <div class="bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
+                <span class="text-slate-400 block font-bold text-[9px] uppercase tracking-wider">AVERAGE WEIGHT</span>
+                <span class="font-bold text-amber-300">${organ.weight}</span>
               </div>
             </div>
 
-            <!-- Stats -->
-            <div class="grid grid-cols-2 gap-2 text-xs mb-4">
-              <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <span class="text-slate-400 block font-semibold text-[10px] uppercase">APPROX SIZE</span>
-                <span class="font-bold text-slate-800">${organ.size}</span>
-              </div>
-              <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <span class="text-slate-400 block font-semibold text-[10px] uppercase">WEIGHT</span>
-                <span class="font-bold text-slate-800">${organ.weight}</span>
-              </div>
-            </div>
-
-            <!-- Function -->
-            <div class="space-y-1 text-xs mb-4">
-              <span class="font-bold text-slate-700 uppercase tracking-wider text-[10px] block">PRIMARY FUNCTION</span>
-              <p class="text-slate-600 bg-slate-50/80 p-2.5 rounded-xl border border-slate-100 leading-relaxed">
+            <!-- Primary Function -->
+            <div class="text-xs space-y-1 mb-3">
+              <span class="font-bold text-slate-400 uppercase tracking-wider text-[9px] block">PRIMARY PHYSIOLOGICAL ROLE</span>
+              <p class="text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
                 ${organ.function}
               </p>
             </div>
           </div>
 
-          <!-- Beneficial Foods -->
-          <div class="border-t border-slate-100 pt-3 mt-2">
-            <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1.5">
-              🥗 RECOMMENDED FOOD SHIELD:
-            </span>
-            <div class="flex flex-wrap gap-1.5">
-              ${organ.foods.map(f => `<span class="bg-emerald-50 text-emerald-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-lg border border-emerald-200">${f}</span>`).join('')}
+          <!-- INTERACTIVE PULL HERE TAB -->
+          <div class="border-t border-slate-800 pt-3">
+            <button onclick="togglePullTab(this)" class="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-fredoka font-black text-xs py-2 px-3 rounded-xl shadow-md transition flex items-center justify-between">
+              <span><i class="fa-solid fa-angles-down"></i> PULL HERE FOR DEEP ANATOMY FACT</span>
+              <i class="fa-solid fa-chevron-down pull-tab-handle"></i>
+            </button>
+
+            <!-- Collapsible Pull Content -->
+            <div class="pull-tab-content space-y-2 pt-3 text-xs">
+              <div class="bg-slate-950 p-3 rounded-2xl border border-amber-400/40 text-amber-200">
+                <span class="font-bold block text-[10px] uppercase text-amber-400">💡 SCIENTIFIC CURIOSITY</span>
+                <p class="mt-0.5">${organ.extraFact}</p>
+              </div>
+
+              <div>
+                <span class="font-bold text-emerald-400 uppercase tracking-wider text-[10px] block mb-1">
+                  🥗 RECOMMENDED SUPERFOOD SHIELD:
+                </span>
+                <div class="flex flex-wrap gap-1">
+                  ${organ.foods.map(f => `<span class="bg-emerald-950 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-emerald-800">${f}</span>`).join('')}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -746,206 +1142,204 @@
       `).join('');
     }
 
-    function filterOrgans(category) {
+    function togglePullTab(btn) {
+      const container = btn.closest('.pull-tab-container');
+      container.classList.toggle('open');
+    }
+
+    function filterOrganCards(cat) {
       document.querySelectorAll('.organ-filter-btn').forEach(b => {
         b.classList.remove('bg-sky-600', 'text-white');
-        b.classList.add('bg-slate-100', 'text-slate-600');
+        b.classList.add('bg-slate-800', 'text-slate-300');
       });
       event.target.classList.add('bg-sky-600', 'text-white');
-      event.target.classList.remove('bg-slate-100', 'text-slate-600');
-      renderOrganCards(category);
+      event.target.classList.remove('bg-slate-800', 'text-slate-300');
+      renderOrganLabCards(cat);
     }
 
     /* ==========================================================================
-       TAB 3: INTERACTIVE SHOPPING GAME LOGIC
+       SHOPPING GAME LOGIC
        ========================================================================== */
     const GAME_MISSIONS = [
       {
-        organ: 'Brain 🧠',
         title: 'Mission #1: Feed the Brain! 🧠',
-        description: 'Your brain needs healthy fats, choline, and antioxidants for memory and focus during class.',
-        requiredFoodKeys: ['eggs', 'salmon', 'blueberries'],
-        maxCount: 3
+        desc: 'Pick 3 foods rich in Omega-3, choline, and antioxidants to boost neuronal focus.',
+        reqKeys: ['eggs', 'salmon', 'blueberries'],
+        limit: 3
       },
       {
-        organ: 'Kidneys & Bladder 🫘💧',
-        title: 'Mission #2: Hydrate Kidneys & Bladder! 🫘',
-        description: 'Pick foods that help filter waste and prevent urinary bacterial infections.',
-        requiredFoodKeys: ['water', 'berry_juice'],
-        maxCount: 2
+        title: 'Mission #2: Renal & Urinary Shield 🫘💧',
+        desc: 'Pick 2 foods that cleanse kidney filtration and inhibit bladder infections.',
+        reqKeys: ['water', 'berry_juice'],
+        limit: 2
       },
       {
-        organ: 'Stomach & Intestines 🫄🧬',
-        title: 'Mission #3: Digestive Gut Shield! 🫄',
-        description: 'Choose probiotic, anti-inflammatory, and fiber-rich foods for smooth digestion.',
-        requiredFoodKeys: ['yogurt', 'ginger', 'oats'],
-        maxCount: 3
+        title: 'Mission #3: Digestive Gut Microbiome 🫄🧬',
+        desc: 'Pick 3 probiotic, digestive enzyme, and fiber-rich superfoods for gut health.',
+        reqKeys: ['yogurt', 'ginger', 'oats'],
+        limit: 3
       }
     ];
 
-    let currentMissionIdx = 0;
-    let selectedCartItems = [];
-    let gameScore = 0;
-
     function initGameMission() {
-      const mission = GAME_MISSIONS[currentMissionIdx];
-      document.getElementById('game-mission-title').textContent = mission.title;
-      document.getElementById('game-mission-desc').textContent = mission.description;
-      document.getElementById('game-progress').textContent = `0 / ${mission.maxCount} Foods`;
+      const m = GAME_MISSIONS[currentGameMissionIdx];
+      document.getElementById('game-mission-title').textContent = m.title;
+      document.getElementById('game-mission-desc').textContent = m.desc;
+      document.getElementById('game-items-limit-tag').textContent = `Need ${m.limit} Foods`;
+      document.getElementById('game-progress-badge').textContent = `0 / ${m.limit}`;
       
-      selectedCartItems = [];
-      renderGameFoodGrid();
-      renderClipboard();
-      
-      const feedback = document.getElementById('game-feedback');
-      feedback.className = 'hidden p-3 rounded-xl text-xs font-bold text-center';
+      gameCartSelection = [];
+      renderGameFoodPicker();
+      renderGameCartSlots();
+      document.getElementById('game-toast-feedback').className = 'hidden p-3 rounded-xl text-xs font-bold text-center';
     }
 
-    function renderGameFoodGrid() {
-      const grid = document.getElementById('game-food-grid');
-      grid.innerHTML = Object.keys(FOODS).map(key => {
-        const food = FOODS[key];
-        const isSelected = selectedCartItems.includes(key);
+    function renderGameFoodPicker() {
+      const grid = document.getElementById('game-food-picker-grid');
+      grid.innerHTML = Object.keys(FOOD_DATA).map(key => {
+        const item = FOOD_DATA[key];
+        const isSelected = gameCartSelection.includes(key);
         return `
-          <button onclick="toggleCartItem('${key}')" class="p-3 rounded-xl border text-left transition flex flex-col justify-between ${isSelected ? 'bg-emerald-100 border-emerald-500 shadow-md ring-2 ring-emerald-400' : 'bg-slate-50 border-slate-200 hover:border-sky-400 hover:bg-white'}">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-2xl">${food.icon}</span>
-              ${isSelected ? '<i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>' : '<i class="fa-solid fa-plus text-slate-300 text-xs"></i>'}
+          <button onclick="toggleGameCartItem('${key}')" class="p-3 rounded-2xl border text-left transition flex flex-col justify-between ${isSelected ? 'bg-emerald-950 border-emerald-500 shadow-lg ring-2 ring-emerald-400' : 'bg-slate-950 border-slate-800 hover:border-sky-500'}">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-2xl">${item.icon}</span>
+              ${isSelected ? '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>' : '<i class="fa-solid fa-plus text-slate-600 text-xs"></i>'}
             </div>
             <div>
-              <span class="font-bold text-xs text-slate-800 block truncate">${food.name}</span>
-              <span class="text-[10px] text-slate-400 block">${food.shelf}</span>
+              <span class="font-fredoka font-bold text-xs text-white block truncate">${item.name}</span>
             </div>
           </button>
         `;
       }).join('');
     }
 
-    function toggleCartItem(foodKey) {
-      const mission = GAME_MISSIONS[currentMissionIdx];
-      const idx = selectedCartItems.indexOf(foodKey);
+    function toggleGameCartItem(key) {
+      const m = GAME_MISSIONS[currentGameMissionIdx];
+      const idx = gameCartSelection.indexOf(key);
 
       if (idx > -1) {
-        selectedCartItems.splice(idx, 1);
+        gameCartSelection.splice(idx, 1);
       } else {
-        if (selectedCartItems.length >= mission.maxCount) {
-          showGameFeedback(`Max limit reached! You can only select ${mission.maxCount} items for this organ.`, 'amber');
+        if (gameCartSelection.length >= m.limit) {
+          showGameToast(`Limit reached! You can only select ${m.limit} items for this mission.`, 'amber');
           return;
         }
-        selectedCartItems.push(foodKey);
+        gameCartSelection.push(key);
       }
 
-      playClickSound();
-      renderGameFoodGrid();
-      renderClipboard();
+      renderGameFoodPicker();
+      renderGameCartSlots();
     }
 
-    function renderClipboard() {
-      const mission = GAME_MISSIONS[currentMissionIdx];
-      const container = document.getElementById('game-clipboard-items');
-      document.getElementById('game-progress').textContent = `${selectedCartItems.length} / ${mission.maxCount} Foods`;
+    function renderGameCartSlots() {
+      const m = GAME_MISSIONS[currentGameMissionIdx];
+      const slots = document.getElementById('game-cart-slots');
+      document.getElementById('game-progress-badge').textContent = `${gameCartSelection.length} / ${m.limit}`;
 
-      if (selectedCartItems.length === 0) {
-        container.innerHTML = `
-          <div class="h-40 flex flex-col items-center justify-center text-amber-700/50 border-2 border-dashed border-amber-300/60 rounded-xl p-4 text-center">
-            <i class="fa-solid fa-cart-arrow-down text-3xl mb-2"></i>
-            <p class="text-xs font-semibold">Your shopping list is empty!<br>Click on foods on the left shelf.</p>
+      if (gameCartSelection.length === 0) {
+        slots.innerHTML = `
+          <div class="h-36 border-2 border-dashed border-amber-300 rounded-2xl flex flex-col items-center justify-center text-amber-800 text-xs font-semibold text-center p-4">
+            <i class="fa-solid fa-basket-shopping text-3xl mb-1 opacity-50"></i>
+            <span>Cart is empty.<br>Click food cards on the left to pick!</span>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = selectedCartItems.map(key => {
-        const food = FOODS[key];
+      slots.innerHTML = gameCartSelection.map(key => {
+        const item = FOOD_DATA[key];
         return `
-          <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-amber-200 shadow-sm">
+          <div class="flex items-center justify-between bg-white/90 p-2.5 rounded-2xl border border-amber-300 text-xs font-bold text-amber-950 shadow">
             <div class="flex items-center gap-2">
-              <span class="text-xl">${food.icon}</span>
-              <span class="font-bold text-sm text-slate-800 font-fredoka">${food.name}</span>
+              <span class="text-xl">${item.icon}</span>
+              <span class="font-fredoka text-sm">${item.name}</span>
             </div>
-            <button onclick="toggleCartItem('${key}')" class="text-rose-500 hover:text-rose-700 text-xs p-1">
-              <i class="fa-solid fa-trash"></i>
+            <button onclick="toggleGameCartItem('${key}')" class="text-rose-600 hover:text-rose-800 text-sm px-1">
+              <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
         `;
       }).join('');
     }
 
-    function submitGameList() {
-      const mission = GAME_MISSIONS[currentMissionIdx];
-      
-      if (selectedCartItems.length < mission.maxCount) {
-        showGameFeedback(`Please select ${mission.maxCount} items before verifying!`, 'amber');
+    function verifyGameList() {
+      const m = GAME_MISSIONS[currentGameMissionIdx];
+      if (gameCartSelection.length < m.limit) {
+        showGameToast(`Please pick all ${m.limit} foods before verifying!`, 'amber');
         return;
       }
 
-      const allCorrect = mission.requiredFoodKeys.every(k => selectedCartItems.includes(k));
+      const isCorrect = m.reqKeys.every(k => gameCartSelection.includes(k));
 
-      if (allCorrect) {
+      if (isCorrect) {
         gameScore += 100;
-        document.getElementById('game-score').textContent = gameScore;
-        showGameFeedback(`🎉 Excellent Job! All ${mission.organ} superfoods match perfectly (+100 pts)!`, 'emerald');
-        
+        document.getElementById('game-score-display').textContent = gameScore;
+        showGameToast(`🎉 Perfect Match! All superfoods correctly selected (+100 pts)!`, 'emerald');
+
         setTimeout(() => {
-          currentMissionIdx = (currentMissionIdx + 1) % GAME_MISSIONS.length;
+          currentGameMissionIdx = (currentGameMissionIdx + 1) % GAME_MISSIONS.length;
           initGameMission();
-        }, 2200);
+        }, 2000);
       } else {
-        showGameFeedback(`❌ Some foods on your list don't match ${mission.organ}. Try again!`, 'rose');
+        showGameToast(`❌ Some items don't fit this organ mission. Try again!`, 'rose');
       }
     }
 
-    function resetGameMission() {
-      selectedCartItems = [];
-      renderGameFoodGrid();
-      renderClipboard();
-      document.getElementById('game-feedback').classList.add('hidden');
+    function resetGameCart() {
+      gameCartSelection = [];
+      renderGameFoodPicker();
+      renderGameCartSlots();
+      document.getElementById('game-toast-feedback').className = 'hidden';
     }
 
-    function showGameFeedback(msg, color) {
-      const fb = document.getElementById('game-feedback');
-      fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800', 'bg-amber-100', 'text-amber-800');
-      
-      if (color === 'emerald') fb.classList.add('bg-emerald-100', 'text-emerald-800', 'border', 'border-emerald-300');
-      if (color === 'rose') fb.classList.add('bg-rose-100', 'text-rose-800', 'border', 'border-rose-300');
-      if (color === 'amber') fb.classList.add('bg-amber-100', 'text-amber-800', 'border', 'border-amber-300');
-      
-      fb.textContent = msg;
+    function showGameToast(msg, color) {
+      const t = document.getElementById('game-toast-feedback');
+      t.className = `p-3 rounded-2xl text-xs font-bold text-center border ${
+        color === 'emerald' ? 'bg-emerald-200 text-emerald-950 border-emerald-400' :
+        color === 'rose' ? 'bg-rose-200 text-rose-950 border-rose-400' :
+        'bg-amber-200 text-amber-950 border-amber-400'
+      }`;
+      t.textContent = msg;
     }
 
     /* ==========================================================================
-       TAB 4: ENGLISH COMPARATIVE QUIZ (BNCC)
+       BNCC EF08LI15 ENGLISH GRAMMAR QUIZ
        ========================================================================== */
     const QUIZ_QUESTIONS = [
       {
         q: 'The liver (~1.5 kg) is __________ than the heart (~300 g).',
-        options: ['larger and heavier', 'smaller and lighter', 'shorter and warmer', 'tastier and softer'],
-        answer: 0,
-        explanation: 'Grammar rule: For short adjectives (large -> larger, heavy -> heavier). The liver weighs ~1.5 kg while the heart weighs ~300 g.'
+        hint: 'Comparative of large & heavy',
+        opts: ['larger and heavier', 'smaller and lighter', 'shorter and warmer', 'tastier and softer'],
+        ans: 0,
+        exp: 'Comparative rule: short adjectives add "-er" (large -> larger, heavy -> heavier). The liver weighs ~1.5 kg while the heart is ~300 g.'
       },
       {
-        q: 'Water is the __________ liquid for keeping kidneys healthy.',
-        options: ['more essential', 'most essential', 'essentialer', 'essentialest'],
-        answer: 1,
-        explanation: 'Grammar rule: "Essential" is a long adjective with 3 syllables, so its superlative form is "the most essential".'
+        q: 'Spring Water is the __________ drink to prevent kidney stones.',
+        hint: 'Superlative of long adjective "essential"',
+        opts: ['more essential', 'most essential', 'essentialer', 'essentialest'],
+        ans: 1,
+        exp: 'Superlative rule: for adjectives with 3+ syllables like "es-sen-tial", use "the most essential".'
       },
       {
-        q: 'Walnuts and blueberries are __________ for brain function than sugary candy.',
-        options: ['gooder', 'better', 'best', 'more good'],
-        answer: 1,
-        explanation: 'Grammar rule: "Good" has an irregular comparative form: Good -> Better -> The Best.'
+        q: 'Salmon Fillets provide __________ Omega-3 fats for the brain than fried potato chips.',
+        hint: 'Irregular comparative of "good"',
+        opts: ['gooder', 'better', 'best', 'more good'],
+        ans: 1,
+        exp: 'Irregular comparative rule: Good -> Better -> The Best.'
       },
       {
-        q: 'The intestines (~6-7 meters) are __________ than the stomach.',
-        options: ['much longer', 'much shorter', 'lighter', 'smaller'],
-        answer: 0,
-        explanation: 'The small & large intestines combined stretch to roughly 6-7 meters in length inside the abdominal cavity!'
+        q: 'The human intestines (~6 to 7 meters) are __________ than the stomach.',
+        hint: 'Length comparison',
+        opts: ['much longer', 'much shorter', 'lighter', 'smaller'],
+        ans: 0,
+        exp: 'The intestines span approximately 6 to 7 meters folded inside the abdominal cavity!'
       },
       {
-        q: 'Which food contains Omega-3 fatty acids that protect the heart and brain?',
-        options: ['Potato Chips', 'Salmon Fillets', 'Soft Drinks', 'Marshmallows'],
-        answer: 1,
-        explanation: 'Salmon fillets are rich in Omega-3 fatty acids, which reduce arterial inflammation and improve neuron membrane health.'
+        q: 'Which superfood contains sulforaphane that aids liver detox?',
+        hint: 'Vegetable shelf item',
+        opts: ['Broccoli Florets', 'French Fries', 'Cotton Candy', 'Marshmallows'],
+        ans: 0,
+        exp: 'Broccoli Florets contain sulforaphane, a bioactive compound activating Phase-II liver enzymes.'
       }
     ];
 
@@ -953,44 +1347,45 @@
     let quizScore = 0;
 
     function renderQuizQuestion() {
-      const qData = QUIZ_QUESTIONS[currentQuizIdx];
-      document.getElementById('quiz-progress-text').textContent = `Question ${currentQuizIdx + 1} of ${QUIZ_QUESTIONS.length}`;
-      document.getElementById('quiz-question').textContent = qData.q;
-      document.getElementById('quiz-explanation').classList.add('hidden');
-      document.getElementById('quiz-next-btn').classList.add('hidden');
+      const q = QUIZ_QUESTIONS[currentQuizIdx];
+      document.getElementById('quiz-question-counter').textContent = `Question ${currentQuizIdx + 1} of ${QUIZ_QUESTIONS.length}`;
+      document.getElementById('quiz-question-text').textContent = q.q;
+      document.getElementById('quiz-hint-text').textContent = `Hint: ${q.hint}`;
+      document.getElementById('quiz-explanation-box').className = 'hidden';
+      document.getElementById('quiz-next-btn').className = 'hidden';
 
-      const optionsContainer = document.getElementById('quiz-options');
-      optionsContainer.innerHTML = qData.options.map((opt, i) => `
-        <button onclick="checkQuizAnswer(${i})" class="quiz-opt-btn p-4 rounded-xl border-2 border-slate-200 bg-slate-50 font-semibold text-slate-800 text-left hover:border-sky-500 hover:bg-sky-50 transition">
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = q.opts.map((opt, i) => `
+        <button onclick="checkQuizAnswer(${i})" class="quiz-opt-btn p-4 rounded-2xl border-2 border-slate-800 bg-slate-950 font-bold text-slate-200 text-left hover:border-sky-500 hover:bg-sky-950/60 transition text-xs sm:text-sm">
           ${String.fromCharCode(65 + i)}) ${opt}
         </button>
       `).join('');
     }
 
     function checkQuizAnswer(selectedIdx) {
-      const qData = QUIZ_QUESTIONS[currentQuizIdx];
+      const q = QUIZ_QUESTIONS[currentQuizIdx];
       const buttons = document.querySelectorAll('.quiz-opt-btn');
 
       buttons.forEach((btn, i) => {
         btn.disabled = true;
-        if (i === qData.answer) {
-          btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+        if (i === q.ans) {
+          btn.classList.add('bg-emerald-950', 'border-emerald-500', 'text-emerald-300');
         } else if (i === selectedIdx) {
-          btn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+          btn.classList.add('bg-rose-950', 'border-rose-500', 'text-rose-300');
         }
       });
 
-      const expEl = document.getElementById('quiz-explanation');
-      expEl.classList.remove('hidden');
+      const exp = document.getElementById('quiz-explanation-box');
+      exp.classList.remove('hidden');
 
-      if (selectedIdx === qData.answer) {
+      if (selectedIdx === q.ans) {
         quizScore += 20;
-        document.getElementById('quiz-score-badge').textContent = `Score: ${quizScore}`;
-        expEl.className = 'p-4 rounded-xl text-sm leading-relaxed border bg-emerald-50 text-emerald-900 border-emerald-200';
-        expEl.innerHTML = `<strong>Correct! 🎉</strong> ${qData.explanation}`;
+        document.getElementById('quiz-score-display').textContent = `Score: ${quizScore} / 100`;
+        exp.className = 'p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border bg-emerald-950 text-emerald-200 border-emerald-500/50';
+        exp.innerHTML = `<strong>Correct! 🎉</strong> ${q.exp}`;
       } else {
-        expEl.className = 'p-4 rounded-xl text-sm leading-relaxed border bg-rose-50 text-rose-900 border-rose-200';
-        expEl.innerHTML = `<strong>Incorrect! 💡</strong> ${qData.explanation}`;
+        exp.className = 'p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border bg-rose-950 text-rose-200 border-rose-500/50';
+        exp.innerHTML = `<strong>Incorrect! 💡</strong> ${q.exp}`;
       }
 
       document.getElementById('quiz-next-btn').classList.remove('hidden');
@@ -1002,50 +1397,31 @@
         renderQuizQuestion();
       } else {
         // Quiz Complete
-        document.getElementById('quiz-question').textContent = `🏆 Quiz Complete! Final Score: ${quizScore} / 100`;
-        document.getElementById('quiz-hint').textContent = 'Great job applying English grammar to organ nutrition science!';
-        document.getElementById('quiz-options').innerHTML = '';
-        document.getElementById('quiz-explanation').className = 'p-6 rounded-xl text-center bg-sky-50 text-sky-900 border border-sky-200 font-bold text-lg';
-        document.getElementById('quiz-explanation').innerHTML = `You earned ${quizScore} points! You are ready for your Show & Tell exhibition! 🎉`;
+        document.getElementById('quiz-question-text').textContent = `🏆 Quiz Completed! Final Score: ${quizScore} / 100`;
+        document.getElementById('quiz-hint-text').textContent = 'Excellent mastery of BNCC EF08LI15 English comparatives!';
+        document.getElementById('quiz-options-container').innerHTML = '';
+        document.getElementById('quiz-explanation-box').className = 'p-6 rounded-2xl text-center bg-sky-950 text-sky-200 border border-sky-500/50 font-bold text-base';
+        document.getElementById('quiz-explanation-box').innerHTML = `You scored ${quizScore} points! You are fully prepared for the Investigadores Vinci exhibition! 🎓`;
         document.getElementById('quiz-next-btn').classList.add('hidden');
       }
     }
 
-    /* AUDIO UTILITY (WEB AUDIO API SYNTHESIZER) */
-    function playClickSound() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08); // A5 note
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.08);
-      } catch (e) {
-        // Audio fallback
-      }
-    }
-
-    /* INITIALIZATION ON WINDOW LOAD */
+    /* ==========================================================================
+       INITIALIZATION
+       ========================================================================== */
     window.onload = function() {
-      // Default food selection on Tab 1
+      // Default food selection
       selectFood('eggs');
-      
-      // Render Organ Cards on Tab 2
-      renderOrganCards();
 
-      // Init Game on Tab 3
+      // Render Organ Lab Cards
+      renderOrganLabCards();
+
+      // Init Game
       initGameMission();
 
-      // Init Quiz on Tab 4
+      // Init Quiz
       renderQuizQuestion();
     };
   </script>
-
 </body>
 </html>
